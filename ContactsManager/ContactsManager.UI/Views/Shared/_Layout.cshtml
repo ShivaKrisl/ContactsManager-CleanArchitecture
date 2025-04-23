@@ -5,16 +5,35 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="~/StyleSheet.css"/>
-    <link rel="stylesheet" href="~/StyleSheet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
 </head>
 <body>
-    <div>
         <div class="container">
             <div class="navbar">
-                <div class="navbar-brand"> <img src="~/logo.jpeg" asp-append-version="true" class="w-25" />
+                <div class="navbar-brand"> <img src="~/logo.jpeg" asp-append-version="true" width="30px" />
+                    </div>
+
                     <ul class="list-container">
+                        @if(User.Identity.IsAuthenticated){
+                            <i class="fa-solid fa-user"></i>
+                            <li>
+                                @User.Identity?.Name
+                            </li>
+                            <li class="list link-hover"><a asp-controller="Account" asp-action="Logout"> Logout </a></li>
+                        }
+                        else{
+                        <li class="list link-hover">
+                            <a asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                        <li class="list link-hover">
+                            <a asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        }
+                    </ul>
+
+                    <ul class="list-container">
+
                         <li class="list link-hover">
                             <a asp-controller="Persons" asp-action="Index">Persons</a>
                         </li>
@@ -27,10 +46,7 @@
                 <div class="page-content">
                     @RenderBody()
                 </div>
-
             </div>
-        </div>
-    </div>
 
 @RenderSection("scripts", required : false)
 </body>

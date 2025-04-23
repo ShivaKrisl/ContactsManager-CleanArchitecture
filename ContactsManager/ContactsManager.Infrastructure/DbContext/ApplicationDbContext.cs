@@ -1,11 +1,13 @@
-﻿using Entities_Core;
+﻿using ContactsManager.Core.Domain.IdentityEntities;
+using Entities_Core;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 
 namespace Db
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         public virtual DbSet<Person> Persons { get; set; }
 
@@ -22,6 +24,10 @@ namespace Db
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // for configuring the identity tables -- default implementation
+            base.OnModelCreating(modelBuilder);
+
+
             modelBuilder.Entity<Person>().ToTable("Persons");
             modelBuilder.Entity<Country>().ToTable("Countries");
 

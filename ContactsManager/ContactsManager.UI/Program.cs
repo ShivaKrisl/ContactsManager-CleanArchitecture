@@ -7,6 +7,9 @@ using Repository_Classes;
 using Serilog;
 using Serilog.AspNetCore;
 using ContactManagement.Middlewares;
+using ContactsManager.Core.Domain.IdentityEntities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +54,15 @@ if(builder.Environment.IsEnvironment("Testing") == false)
     });
 }
 
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()// User class name & role class name
+    .AddEntityFrameworkStores<ApplicationDbContext>()// dbcontext name
+    .AddDefaultTokenProviders() // add default token providers like email confirmation, password reset, glogin, fblogin etc.
+    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()// for user repository -- repository is generated automatically
+    .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+    // for role repository -- repository is generated automatically
+    
+
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -75,6 +87,8 @@ app.UseSerilogRequestLogging(); // add Serilog middleware to log requests
 
 
 app.UseStaticFiles();
+
+app.UseAuthentication(); // to carry cookie in subsequent requests
 app.UseRouting();
 app.MapControllers();
 
