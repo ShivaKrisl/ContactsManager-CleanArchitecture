@@ -10,6 +10,7 @@ using ContactManagement.Middlewares;
 using ContactsManager.Core.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,11 @@ builder.Services.AddHttpLogging(logging => // add HttpLogging Service
     logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>(); // add antiforgery token validation to all controllers
+});
+
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 
@@ -46,6 +51,7 @@ builder.Services.AddScoped<IPersonsGetterService, PersonsGetterService>();
 builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
 
+// add DbCOntext
 if(builder.Environment.IsEnvironment("Testing") == false)
 {
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -54,16 +60,46 @@ if(builder.Environment.IsEnvironment("Testing") == false)
     });
 }
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()// User class name & role class name
+// add Identity Context
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    options.Password.RequiredLength = 6; // min length
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredUniqueChars = 3;
+
+})// User class name & role class name
     .AddEntityFrameworkStores<ApplicationDbContext>()// dbcontext name
     .AddDefaultTokenProviders() // add default token providers like email confirmation, password reset, glogin, fblogin etc.
     .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()// for user repository -- repository is generated automatically
     .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
-    // for role repository -- repository is generated automatically
-    
+// for role repository -- repository is generated automatically
 
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().RequireAuthenticatedUser()
+        .Build(); // fallback policy for all endpoints
+
+    options.AddPolicy("NotAuthorized", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            return !context.User.Identity.IsAuthenticated; // if user is not authenticated will return true
+            // to allow anonymous access to the endpoints
+        });
+    });
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // redirect to login page if user is not authenticated
+});
 
 var app = builder.Build();
+// 1. ExceptionalHandlingMiddleware
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -73,6 +109,10 @@ else
     app.UseExceptionHandler("/Error"); // add built in error handling middleware 
     app.UseExceptionalHandlingMiddleware(); // add custom middleware to handle exceptions
 }
+
+// 2. HTTPS Middleware
+app.UseHsts(); // add HSTS middleware to enforce use HTTPS in browser
+app.UseHttpsRedirection(); // add HTTPS redirection middleware to redirect HTTP requests to HTTPS
 
 app.UseHttpLogging();
 app.UseSerilogRequestLogging(); // add Serilog middleware to log requests
@@ -88,9 +128,18 @@ app.UseSerilogRequestLogging(); // add Serilog middleware to log requests
 
 app.UseStaticFiles();
 
-app.UseAuthentication(); // to carry cookie in subsequent requests
 app.UseRouting();
+app.UseAuthentication(); // to carry cookie in subsequent requests 
+app.UseAuthorization(); // to check if user is authorized to access the resource
 app.MapControllers();
+
+app.UseEndpoints(endPoints =>
+{
+    endPoints.MapControllerRoute(
+            name : "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}" // default route for areas is Admin/Home/Index, even if you do Admin it will redirect to Admin/Home/Index
+    ); 
+});
 
 app.Run();
 

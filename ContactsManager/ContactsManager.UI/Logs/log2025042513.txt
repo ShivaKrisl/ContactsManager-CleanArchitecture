@@ -1,0 +1,152 @@
+2025-04-25 13:45:19.827 +05:30 [INF] User profile is available. Using 'C:\Users\SHIVA KRISHNA\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-25 13:45:20.184 +05:30 [INF] Now listening on: http://localhost:5268
+2025-04-25 13:45:20.248 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-25 13:45:20.249 +05:30 [INF] Hosting environment: Development
+2025-04-25 13:45:20.249 +05:30 [INF] Content root path: D:\Microsoft\ASP.NET_Learn\ContactsManager\ContactsManager\ContactsManager.UI
+2025-04-25 13:45:25.098 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/ - null null
+2025-04-25 13:45:25.339 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /
+2025-04-25 13:45:25.476 +05:30 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-04-25 13:45:25.491 +05:30 [INF] AuthenticationScheme: Identity.Application was challenged.
+2025-04-25 13:45:25.496 +05:30 [INF] HTTP GET / responded 302 in 148.6390 ms
+2025-04-25 13:45:25.502 +05:30 [INF] Response:
+StatusCode: 302
+Location: http://localhost:5268/Account/Login?ReturnUrl=%2F
+2025-04-25 13:45:25.515 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/ - 302 0 null 422.652ms
+2025-04-25 13:45:25.527 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2F - null null
+2025-04-25 13:45:25.533 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /Account/Login
+2025-04-25 13:45:25.546 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:25.658 +05:30 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-25 13:45:27.069 +05:30 [INF] Executing ViewResult, running view Login.
+2025-04-25 13:45:27.394 +05:30 [INF] Executed ViewResult - view Login executed in 357.3371ms.
+2025-04-25 13:45:27.395 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI) in 1734.713ms
+2025-04-25 13:45:27.396 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:27.396 +05:30 [INF] HTTP GET /Account/Login responded 200 in 1862.1014 ms
+2025-04-25 13:45:27.396 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Fri, 25 Apr 2025 08:15:27 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Set-Cookie: [Redacted]
+Transfer-Encoding: chunked
+X-Frame-Options: [Redacted]
+2025-04-25 13:45:27.446 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2F - 200 null text/html; charset=utf-8 1918.9933ms
+2025-04-25 13:45:27.675 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - null null
+2025-04-25 13:45:27.681 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_vs/browserLink - null null
+2025-04-25 13:45:27.682 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - 200 13772 application/javascript; charset=utf-8 6.8382ms
+2025-04-25 13:45:27.790 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_vs/browserLink - 200 null text/javascript; charset=UTF-8 108.8666ms
+2025-04-25 13:45:28.231 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/favicon.ico - null null
+2025-04-25 13:45:28.232 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /favicon.ico
+2025-04-25 13:45:28.243 +05:30 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-04-25 13:45:28.244 +05:30 [INF] AuthenticationScheme: Identity.Application was challenged.
+2025-04-25 13:45:28.244 +05:30 [INF] HTTP GET /favicon.ico responded 302 in 11.8207 ms
+2025-04-25 13:45:28.244 +05:30 [INF] Response:
+StatusCode: 302
+Location: http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico
+2025-04-25 13:45:28.244 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/favicon.ico - 302 0 null 12.8363ms
+2025-04-25 13:45:28.252 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico - null null
+2025-04-25 13:45:28.254 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /Account/Login
+2025-04-25 13:45:28.258 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:28.259 +05:30 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-25 13:45:28.277 +05:30 [INF] Executing ViewResult, running view Login.
+2025-04-25 13:45:28.291 +05:30 [INF] Executed ViewResult - view Login executed in 13.7642ms.
+2025-04-25 13:45:28.291 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI) in 31.631ms
+2025-04-25 13:45:28.291 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:28.291 +05:30 [INF] HTTP GET /Account/Login responded 200 in 36.8932 ms
+2025-04-25 13:45:28.292 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Fri, 25 Apr 2025 08:15:28 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Transfer-Encoding: chunked
+2025-04-25 13:45:28.292 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico - 200 null text/html; charset=utf-8 40.0561ms
+2025-04-25 13:45:57.190 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/Account/Register - null null
+2025-04-25 13:45:57.196 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /Account/Register
+2025-04-25 13:45:57.197 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI)'
+2025-04-25 13:45:57.202 +05:30 [INF] Route matched with {action = "Register", controller = "Account"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Register() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-25 13:45:57.246 +05:30 [INF] Executing ViewResult, running view Register.
+2025-04-25 13:45:57.369 +05:30 [INF] Executed ViewResult - view Register executed in 123.8269ms.
+2025-04-25 13:45:57.369 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI) in 166.7383ms
+2025-04-25 13:45:57.370 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI)'
+2025-04-25 13:45:57.370 +05:30 [INF] HTTP GET /Account/Register responded 200 in 174.0205 ms
+2025-04-25 13:45:57.371 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Fri, 25 Apr 2025 08:15:56 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Transfer-Encoding: chunked
+2025-04-25 13:45:57.373 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/Account/Register - 200 null text/html; charset=utf-8 183.0481ms
+2025-04-25 13:45:57.465 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - null null
+2025-04-25 13:45:57.466 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - 200 13772 application/javascript; charset=utf-8 0.6561ms
+2025-04-25 13:45:57.467 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_vs/browserLink - null null
+2025-04-25 13:45:57.514 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_vs/browserLink - 200 null text/javascript; charset=UTF-8 46.3081ms
+2025-04-25 13:45:57.675 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/favicon.ico - null null
+2025-04-25 13:45:57.676 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /favicon.ico
+2025-04-25 13:45:57.680 +05:30 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-04-25 13:45:57.681 +05:30 [INF] AuthenticationScheme: Identity.Application was challenged.
+2025-04-25 13:45:57.681 +05:30 [INF] HTTP GET /favicon.ico responded 302 in 4.9695 ms
+2025-04-25 13:45:57.683 +05:30 [INF] Response:
+StatusCode: 302
+Location: http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico
+2025-04-25 13:45:57.683 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/favicon.ico - 302 0 null 8.1901ms
+2025-04-25 13:45:57.714 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico - null null
+2025-04-25 13:45:57.714 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /Account/Login
+2025-04-25 13:45:57.715 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:57.718 +05:30 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-25 13:45:57.727 +05:30 [INF] Executing ViewResult, running view Login.
+2025-04-25 13:45:57.738 +05:30 [INF] Executed ViewResult - view Login executed in 11.8342ms.
+2025-04-25 13:45:57.739 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI) in 19.8164ms
+2025-04-25 13:45:57.739 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-25 13:45:57.739 +05:30 [INF] HTTP GET /Account/Login responded 200 in 24.1845 ms
+2025-04-25 13:45:57.739 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Fri, 25 Apr 2025 08:15:57 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Transfer-Encoding: chunked
+2025-04-25 13:45:57.739 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/Account/Login?ReturnUrl=%2Ffavicon.ico - 200 null text/html; charset=utf-8 25.1668ms

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace Entities_DTO
 
         [Required(ErrorMessage = "Last Name is required.")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        [Remote(action: "IsEmailAlreadyExists", controller:"Account", ErrorMessage = "Email already exists!!")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
@@ -33,6 +36,7 @@ namespace Entities_DTO
         public string? PhoneNumber { get; set; }
 
 
+        public UserRoles UserType { get; set; } = UserRoles.USER;
 
     }
 }

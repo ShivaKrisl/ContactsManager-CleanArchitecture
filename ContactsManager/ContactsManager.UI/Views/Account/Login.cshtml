@@ -1,8 +1,7 @@
-﻿@model RegisterDTO
-
+﻿@model LoginDTO
 @{
-    ViewBag.Title = "Register";
-    ViewBag.CurrentUrl = "~/Account/Register";
+    ViewBag.Title = "Login";
+    ViewBag.CurrentUrl = "~/Account/Login";
 }
 
 
@@ -10,46 +9,23 @@
 <div class="text-grey">
     <span>Contacts</span>
     <i class="fa-solid fa-caret-right"></i>
-    <span>Register</span>
+    <span>Login</span>
 </div>
 
 <div class="form-container">
-    Already Registered? <a asp-action="Login" asp-controller="Account" class="link-hover">Login</a>
-    <h2 class="text-large">Register</h2>
+    New User? <a asp-action="Register" asp-controller="Account" class="link-hover">Regitser</a>
+    <h2 class="text-large">Login</h2>
 
-    <form asp-controller="Account" asp-action="Register" method="POST">
-
-        @*First Name*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label asp-for="FirstName" class="form-label pt">First Name</label>
-            </div>
-            <div class="flex-1">
-                <input asp-for="FirstName" type="text" class="form-input"/>
-                <span asp-validation-for="FirstName" class="text-red"></span>
-            </div>
-        </div>
+    <form asp-controller="Account" asp-action="Login"  asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]"  method="POST">
 
         @*Email*@
-
         <div class="form-field flex">
             <div class="w-25">
                 <label asp-for="Email" class="form-label pt">Email</label>
             </div>
             <div class="flex-1">
-                <input asp-for="Email" type="email" class="form-input"/>
+                <input asp-for="Email" type="email" class="form-input" />
                 <span asp-validation-for="Email" class="text-red"></span>
-            </div>
-        </div>
-
-        @*Phone Number*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label asp-for="PhoneNumber" class="form-label pt">Mobile</label>
-            </div>
-            <div class="flex-1">
-                <input asp-for="PhoneNumber" type="tel" class="form-input" />
-                <span asp-validation-for="PhoneNumber" class="text-red"></span>
             </div>
         </div>
 
@@ -64,41 +40,16 @@
             </div>
         </div>
 
-        @*Confirm Password*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label asp-for="ConfirmPassword" class="form-label pt">Confirm Password</label>
-            </div>
-            <div class="flex-1">
-                <input asp-for="ConfirmPassword" type="password" class="form-input" />
-                <span asp-validation-for="ConfirmPassword" class="text-red"></span>
-            </div>
-        </div>
-
-        @*User Type*@
-        <div class="form-field flex">
-            <div class="w-25">
-                <label asp-for="UserType" class="form-label pt">User Type</label>
-            </div>
-            <div class="flex-1">
-                <input type="radio" id="ADMIN" asp-for="UserType" value="@UserRoles.ADMIN.ToString()" />
-                <label for="ADMIN">Admin</label>
-
-                <input type="radio" id="USER" asp-for="UserType" value="@UserRoles.USER.ToString()" checked/>
-                <label for="USER">User</label>
-                <span asp-validation-for="ConfirmPassword" class="text-red"></span>
-            </div>
-        </div>
-
         @*Submit Button*@
         <div class="form-field flex">
             <div class="w-25"> </div>
             <div class="flex-1">
-                <button class="button button-green-back" type="submit">Register</button>
+                <button class="button button-green-back" type="submit">Login</button>
 
                 <div asp-validation-summary="All" class="text-red"></div>
 
-                @if(ViewBag.Errors != null){
+                @if (ViewBag.Errors != null)
+                {
                     <div class="text-red ml">
                         <ul>
                             @foreach (var error in ViewBag.Errors)
@@ -106,7 +57,7 @@
                                 <li class="ml">@error</li>
                             }
                         </ul>
-                     </div>
+                    </div>
                 }
             </div>
         </div>
@@ -115,7 +66,6 @@
 </div>
 
 <div>
-
 </div>
 
 @section scripts {
@@ -126,3 +76,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer" asp-fallback-test="window.jQuery.validator.unobstrustive" asp-fallback-src="~/jquery.validate.unobtrusive.min.js"></script>
 
 }
+

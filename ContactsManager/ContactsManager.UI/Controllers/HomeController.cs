@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManagement.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         [Route("Error")]

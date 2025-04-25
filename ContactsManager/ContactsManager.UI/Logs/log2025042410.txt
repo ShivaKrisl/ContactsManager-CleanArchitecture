@@ -1,0 +1,78 @@
+2025-04-24 10:41:45.797 +05:30 [INF] User profile is available. Using 'C:\Users\SHIVA KRISHNA\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-24 10:41:46.095 +05:30 [INF] Now listening on: http://localhost:5268
+2025-04-24 10:41:46.134 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-24 10:41:46.135 +05:30 [INF] Hosting environment: Development
+2025-04-24 10:41:46.135 +05:30 [INF] Content root path: D:\Microsoft\ASP.NET_Learn\ContactsManager\ContactsManager\ContactsManager.UI
+2025-04-24 10:41:53.171 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/ - null null
+2025-04-24 10:41:56.571 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /
+2025-04-24 10:41:57.358 +05:30 [INF] Executing endpoint 'ContactManagement.Controllers.PersonsController.Index (ContactsManager.UI)'
+2025-04-24 10:41:57.600 +05:30 [INF] Route matched with {action = "Index", controller = "Persons"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(System.String, System.String, System.String, Enums.SortOrderEnum) on controller ContactManagement.Controllers.PersonsController (ContactsManager.UI).
+2025-04-24 10:42:00.199 +05:30 [INF] PersonsController: Index action called
+2025-04-24 10:42:00.221 +05:30 [INF] GetFilteredPersons called
+2025-04-24 10:42:11.268 +05:30 [INF] Executed DbCommand (73ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[PersonId], [p].[CountryId], [p].[DateOfBirth], [p].[Email], [p].[FirstName], [p].[Gender], [p].[LastName], [p].[PhoneNumber], [c].[CountryId], [c].[CountryName]
+FROM [Persons] AS [p]
+INNER JOIN [Countries] AS [c] ON [p].[CountryId] = [c].[CountryId]
+2025-04-24 10:42:11.328 +05:30 [INF] SortPersons called
+2025-04-24 10:42:11.910 +05:30 [INF] Executing ViewResult, running view Index.
+2025-04-24 10:42:12.716 +05:30 [INF] Executed ViewResult - view Index executed in 873.0271ms.
+2025-04-24 10:42:12.722 +05:30 [INF] Executed action ContactManagement.Controllers.PersonsController.Index (ContactsManager.UI) in 15120.834ms
+2025-04-24 10:42:12.723 +05:30 [INF] Executed endpoint 'ContactManagement.Controllers.PersonsController.Index (ContactsManager.UI)'
+2025-04-24 10:42:12.727 +05:30 [INF] HTTP GET / responded 200 in 16116.8311 ms
+2025-04-24 10:42:12.730 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Thu, 24 Apr 2025 05:12:12 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+2025-04-24 10:42:12.767 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/ - 200 null text/html; charset=utf-8 19635.1904ms
+2025-04-24 10:42:13.018 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - null null
+2025-04-24 10:42:13.035 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - 200 13772 application/javascript; charset=utf-8 17.1962ms
+2025-04-24 10:42:13.155 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_vs/browserLink - null null
+2025-04-24 10:42:13.967 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_vs/browserLink - 200 null text/javascript; charset=UTF-8 811.3885ms
+2025-04-24 10:42:14.104 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/favicon.ico - null null
+2025-04-24 10:42:14.104 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /favicon.ico
+2025-04-24 10:42:14.119 +05:30 [INF] HTTP GET /favicon.ico responded 404 in 14.7885 ms
+2025-04-24 10:42:14.120 +05:30 [INF] Response:
+StatusCode: 404
+2025-04-24 10:42:14.120 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/favicon.ico - 404 0 null 16.6629ms
+2025-04-24 10:42:14.121 +05:30 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5268/favicon.ico, Response status code: 404
+2025-04-24 10:42:33.549 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/Account/Register - null null
+2025-04-24 10:42:33.556 +05:30 [INF] Request:
+Protocol: HTTP/1.1
+Method: GET
+Scheme: http
+PathBase: 
+Path: /Account/Register
+2025-04-24 10:42:33.565 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI)'
+2025-04-24 10:42:33.572 +05:30 [INF] Route matched with {action = "Register", controller = "Account"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Register() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-24 10:42:33.629 +05:30 [INF] Executing ViewResult, running view Register.
+2025-04-24 10:42:33.734 +05:30 [INF] Executed ViewResult - view Register executed in 113.041ms.
+2025-04-24 10:42:33.734 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI) in 161.6809ms
+2025-04-24 10:42:33.734 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Register (ContactsManager.UI)'
+2025-04-24 10:42:33.734 +05:30 [INF] HTTP GET /Account/Register responded 200 in 177.8843 ms
+2025-04-24 10:42:33.734 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Thu, 24 Apr 2025 05:12:32 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Set-Cookie: [Redacted]
+Transfer-Encoding: chunked
+X-Frame-Options: [Redacted]
+2025-04-24 10:42:33.744 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/Account/Register - 200 null text/html; charset=utf-8 194.9438ms
+2025-04-24 10:42:33.821 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - null null
+2025-04-24 10:42:33.822 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_framework/aspnetcore-browser-refresh.js - 200 13772 application/javascript; charset=utf-8 0.6738ms
+2025-04-24 10:42:33.823 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5268/_vs/browserLink - null null
+2025-04-24 10:42:33.876 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5268/_vs/browserLink - 200 null text/javascript; charset=UTF-8 52.8289ms

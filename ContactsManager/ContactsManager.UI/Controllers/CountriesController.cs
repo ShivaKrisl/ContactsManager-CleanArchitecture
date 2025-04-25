@@ -21,6 +21,7 @@ namespace ContactManagement.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
         [Route("[action]")]
         [HttpPost]
         public async Task<IActionResult> Add(CountryRequest countryRequest)

@@ -78,6 +78,7 @@ namespace ContactManagement.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
         [Route("[action]")]
         [HttpPost]
         public async Task<IActionResult> Create(PersonRequest personRequest)
@@ -117,6 +118,7 @@ namespace ContactManagement.Controllers
             return View(personRequest);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         [Route("[action]/{personId:Guid}")]
         public async Task<IActionResult> Edit(Guid personId, PersonRequest personRequest)
@@ -149,6 +151,7 @@ namespace ContactManagement.Controllers
             return View(personResponse);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         [Route("[action]/{personId:Guid}")]
         public async Task<IActionResult> DeleteConfirm(Guid personId)
