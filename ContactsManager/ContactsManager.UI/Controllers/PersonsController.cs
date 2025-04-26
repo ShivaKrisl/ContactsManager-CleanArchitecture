@@ -37,6 +37,7 @@ namespace ContactManagement.Controllers
 
         [Route("[action]")]
         [Route("/")]
+        [TypeFilter(typeof(Filters.ActionFilters.PersonListActionFilter))] // Action Filter
         public async Task<IActionResult> Index(string? searchBy, string? searchString, string sortBy = nameof(PersonRequest.FirstName), SortOrderEnum sortOrder = SortOrderEnum.ASCENDING)
         {
 
@@ -50,6 +51,7 @@ namespace ContactManagement.Controllers
 
             List<PersonResponse>? sortedPersonResponses = await _personsSorterService.SortPersons(personResponses, sortBy, sortOrder);
 
+            /*
             ViewBag.searchFields = new Dictionary<string, string>()
             {
                 { nameof(PersonResponse.FirstName), "First Name" },
@@ -57,11 +59,13 @@ namespace ContactManagement.Controllers
                 {nameof(PersonResponse.Email), "Email Id" },
                 {nameof(PersonResponse.PhoneNumber), "Mobile Number" }
             };
+            */
 
-            ViewBag.currentSearchBy = searchBy;
-            ViewBag.currentSearchString = searchString; // to persist the search field with last searched one
-            ViewBag.currentSortBy = sortBy;
-            ViewBag.currentSortOrder = sortOrder;
+            // this we can write in onActionExecuted method of action filter
+            //ViewBag.currentSearchBy = searchBy;
+            //ViewBag.currentSearchString = searchString; // to persist the search field with last searched one
+            //ViewBag.currentSortBy = sortBy;
+            //ViewBag.currentSortOrder = sortOrder;
             return View(viewName:"Index",model:sortedPersonResponses);
         }
 
