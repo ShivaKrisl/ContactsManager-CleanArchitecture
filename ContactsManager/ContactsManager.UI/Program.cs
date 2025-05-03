@@ -11,6 +11,7 @@ using ContactsManager.Core.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Filters.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +35,14 @@ builder.Services.AddHttpLogging(logging => // add HttpLogging Service
     logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
+
 builder.Services.AddControllersWithViews(options =>
 {
+    // get logger from DI container
+    var logger = builder.Services.BuildServiceProvider().GetService<ILogger<ResponseHeaderActionFilter>>();
+
+    options.Filters.Add(new ResponseHeaderActionFilter(logger, "X-GlobalLevel", "Global-Value", 2));
+
     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>(); // add antiforgery token validation to all controllers
 });
 

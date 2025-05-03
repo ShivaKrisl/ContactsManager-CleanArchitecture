@@ -1,0 +1,4 @@
+2025-04-29 09:44:48.630 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-29 09:44:48.661 +05:30 [INF] Hosting environment: Development
+2025-04-29 09:44:48.662 +05:30 [INF] Content root path: D:\Microsoft\ASP.NET_Learn\ContactsManager\ContactsManager\ContactsManager.UI
+2025-04-29 09:59:59.867 +05:30 [INF] User profile is available. Using 'C:\Users\SHIVA KRISHNA\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.

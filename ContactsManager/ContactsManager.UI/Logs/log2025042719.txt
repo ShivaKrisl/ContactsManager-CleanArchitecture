@@ -1,0 +1,44 @@
+2025-04-27 19:32:49.385 +05:30 [INF] User profile is available. Using 'C:\Users\SHIVA KRISHNA\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-27 19:32:49.936 +05:30 [INF] Now listening on: https://localhost:5268
+2025-04-27 19:32:53.579 +05:30 [INF] Request starting HTTP/2 GET https://localhost:5268/ - null null
+2025-04-27 19:32:53.686 +05:30 [INF] Request:
+Protocol: HTTP/2
+Method: GET
+Scheme: https
+PathBase: 
+Path: /
+2025-04-27 19:32:53.855 +05:30 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-04-27 19:32:53.903 +05:30 [INF] AuthenticationScheme: Identity.Application was challenged.
+2025-04-27 19:32:53.908 +05:30 [INF] HTTP GET / responded 302 in 215.6860 ms
+2025-04-27 19:32:53.923 +05:30 [INF] Response:
+StatusCode: 302
+Location: https://localhost:5268/Account/Login?ReturnUrl=%2F
+2025-04-27 19:32:53.939 +05:30 [INF] Request finished HTTP/2 GET https://localhost:5268/ - 302 0 null 363.458ms
+2025-04-27 19:32:54.187 +05:30 [INF] Request starting HTTP/2 GET https://localhost:5268/Account/Login?ReturnUrl=%2F - null null
+2025-04-27 19:32:54.250 +05:30 [INF] Request:
+Protocol: HTTP/2
+Method: GET
+Scheme: https
+PathBase: 
+Path: /Account/Login
+2025-04-27 19:32:54.275 +05:30 [INF] Executing endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-27 19:32:54.481 +05:30 [INF] Route matched with {action = "Login", controller = "Account", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login() on controller ContactsManager.UI.Controllers.AccountController (ContactsManager.UI).
+2025-04-27 19:32:56.532 +05:30 [INF] -------- ResponseHeaderActionFilter.OnActionExecuting called --------
+2025-04-27 19:32:56.549 +05:30 [INF] -------- ResponseHeaderActionFilter.OnActionExecuted called --------
+2025-04-27 19:32:56.566 +05:30 [INF] Executing ViewResult, running view Login.
+2025-04-27 19:32:57.272 +05:30 [INF] Executed ViewResult - view Login executed in 713.6222ms.
+2025-04-27 19:32:57.278 +05:30 [INF] Executed action ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI) in 2786.6956ms
+2025-04-27 19:32:57.279 +05:30 [INF] Executed endpoint 'ContactsManager.UI.Controllers.AccountController.Login (ContactsManager.UI)'
+2025-04-27 19:32:57.280 +05:30 [INF] HTTP GET /Account/Login responded 200 in 3029.5932 ms
+2025-04-27 19:32:57.281 +05:30 [INF] Response:
+StatusCode: 200
+Content-Type: text/html; charset=utf-8
+Date: Sun, 27 Apr 2025 14:02:56 GMT
+Server: Kestrel
+Cache-Control: [Redacted]
+Pragma: [Redacted]
+Set-Cookie: [Redacted]
+X-GlobalLevel: [Redacted]
+X-Frame-Options: [Redacted]
+2025-04-27 19:32:57.301 +05:30 [INF] Request finished HTTP/2 GET https://localhost:5268/Account/Login?ReturnUrl=%2F - 200 null text/html; charset=utf-8 3114.4355ms

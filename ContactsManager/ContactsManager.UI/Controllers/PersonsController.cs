@@ -3,10 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service_Contracts;
 using Enums;
+using Filters.ActionFilters;
+using ContactsManager.UI.Filters.ActionFilters;
+using Filters.ResultFilters;
+using Filters.ResourceFilters;
+using Filters.ExceptionFilters;
 
 namespace ContactManagement.Controllers
 {
     [Route("[controller]")]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "X-ClassLevel", "Class-Value",3 }, Order =3)] // Action Filter
+    [TypeFilter(typeof(HandleExceptionFilter))]
     public class PersonsController : Controller
     {
         private readonly ICountriesGetterService _countriesGetterService;
@@ -37,7 +44,10 @@ namespace ContactManagement.Controllers
 
         [Route("[action]")]
         [Route("/")]
-        [TypeFilter(typeof(Filters.ActionFilters.PersonListActionFilter))] // Action Filter
+        [TypeFilter(typeof(PersonListActionFilter), Order =4)] // Action Filter
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "X-MethodLevel", "Method-Value", 1}, Order =1)] // Action Filter
+        [TypeFilter(typeof(PersonsListResultFilter))]
+
         public async Task<IActionResult> Index(string? searchBy, string? searchString, string sortBy = nameof(PersonRequest.FirstName), SortOrderEnum sortOrder = SortOrderEnum.ASCENDING)
         {
 
@@ -71,6 +81,7 @@ namespace ContactManagement.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        [TypeFilter(typeof(FeatureDisableResourceFilter), Arguments = new object[]{false })]
         public async Task<IActionResult> Create()
         {
             List<CountryResponse>? countryResponses = await _countriesGetterService.GetAllCountries();
@@ -85,17 +96,18 @@ namespace ContactManagement.Controllers
         [ValidateAntiForgeryToken]
         [Route("[action]")]
         [HttpPost]
+        [TypeFilter(typeof(PersonCreateErrorActionFilter))]
         public async Task<IActionResult> Create(PersonRequest personRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                List<CountryResponse>? countryResponses = await _countriesGetterService.GetAllCountries();
-                ViewBag.countries = countryResponses;
+        //    if (!ModelState.IsValid)
+        //    {
+        //        List<CountryResponse>? countryResponses = await _countriesGetterService.GetAllCountries();
+        //        ViewBag.countries = countryResponses;
 
-                ViewBag.errors = ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage).ToList();
+        //        ViewBag.errors = ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View(viewName : "Create");
-            }
+        //        return View(viewName : "Create");
+        //    }
             PersonResponse personResponse = await _personsAdderService.AddPerson(personRequest);
             return RedirectToAction("Index", "Persons");
         }
