@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Filters.ActionFilters
 {
@@ -31,7 +32,7 @@ namespace Filters.ActionFilters
             _logger.LogInformation("-------- {FilterName}.{MethodName} called for End --------", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
 
             // Add custom header to the response
-            context.HttpContext.Response.Headers.Add(_key, _value);
+            context.HttpContext.Response.Headers.Append(_key, _value);
 
         }
 
