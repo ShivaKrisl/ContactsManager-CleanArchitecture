@@ -1,16 +1,16 @@
 **ContactsManager — Clean Architecture ASP.NET MVC**
 
-This repository is a sample Contacts Manager web application built with ASP.NET Core MVC and organized using a Clean Architecture approach (presentation → services → repositories → persistence). It demonstrates layering, dependency injection, DTOs, EF Core persistence, Identity authentication, and a suite of unit + integration tests.
+This repository is a sample Contacts Manager web application built with ASP.NET Core MVC and organized using a Clean Architecture approach (presentation → services → repositories → persistence). It demonstrates layering, dependency injection, DTOs, JSON file persistence, cookie authentication, and a suite of unit + integration tests.
 
 **Contents**
 - **UI:** ContactsManager.UI — ASP.NET MVC controllers, Views, Filters, Middlewares, Identity login/registration UI.
 - **Core:** ContactsManager.Core — Domain entities, DTOs, service contracts, service implementations, helpers, and business logic.
-- **Infrastructure:** ContactsManager.Infrastructure — EF Core `ApplicationDbContext`, repositories.
+- **Infrastructure:** ContactsManager.Infrastructure — file-backed repositories, JSON storage helpers, authentication storage.
 - **Tests:** Service, Controller and Integration tests under `ContactsManager.ServiceTests`, `ContactsManager.ControllerTests`, and `ContactsManager.IntegrationTests`.
 
 **Quick start**
 
-Prerequisites: .NET SDK (6+), SQL Server for regular runs (integration tests use in-memory DB).
+Prerequisites: .NET SDK (6+). No SQL Server is required.
 
 Build and run (Development):
 
@@ -26,14 +26,14 @@ Run all tests:
 dotnet test
 ```
 
-Integration tests use an in-memory EF Core DB via `CustomWebApplicationFactory` so they can run without a SQL Server instance.
+Integration tests run against the same file-backed storage and use `CustomWebApplicationFactory` to switch the app into `Testing` mode.
 
 **High-level architecture**
 
 - Presentation (UI): MVC Controllers, Views, Filters, Middlewares
 - Application / Services: DTOs, validation, business logic (`Service_Contracts`, `Service_Classes`)
-- Persistence: Repository interfaces and EF Core implementations (`Repository_Contracts`, `Repository_Classes`)
-- Infrastructure: `ApplicationDbContext` (Identity + domain DbSets)
+- Persistence: Repository interfaces and JSON file implementations (`Repository_Contracts`, `Repository_Classes`)
+- Infrastructure: file storage helpers, JSON auth store, and seed files under `Db/`
 
 Mermaid high-level component diagram
 
@@ -41,9 +41,9 @@ Mermaid high-level component diagram
 flowchart LR
   UI[UI - MVC Controllers and Views] -->|calls| Services[Services - Business Logic and DTOs]
   Services -->|calls| Repos[Repositories - EF Core implementations]
-  Repos -->|uses| Db[ApplicationDbContext]
-  UI -->|auth| Identity[Identity - Users and Roles]
-  Identity --> Db
+  Repos -->|reads and writes| Files[(Db/*.json)]
+  UI -->|auth| Auth[File-based cookie auth]
+  Auth --> Files
 ```
 
 Sequence diagram: Add Person (high-level)
@@ -54,16 +54,16 @@ sequenceDiagram
   participant PersonsController as "PersonsController"
   participant PersonsAdderService as "PersonsAdderService"
   participant PersonsRepository as "PersonsRepository"
-  participant ApplicationDbContext as "ApplicationDbContext"
+  participant FileStore as "JSON Files"
 
   Browser->>PersonsController: POST /Persons/Create (PersonRequest)
   PersonsController->>PersonsAdderService: AddPerson(personRequest)
   PersonsAdderService->>PersonsAdderService: Validate DTO (ValidationHelper)
   PersonsAdderService->>PersonsRepository: GetPersonByEmail / GetPersonByMobile
-  PersonsRepository->>ApplicationDbContext: Query Persons
+  PersonsRepository->>FileStore: Query persons.json and countries.json
   PersonsRepository-->>PersonsAdderService: existing? null
   PersonsAdderService->>PersonsRepository: AddPerson(person)
-  PersonsRepository->>ApplicationDbContext: Insert & SaveChanges
+  PersonsRepository->>FileStore: Insert & save persons.json
   PersonsRepository-->>PersonsAdderService: new Person
   PersonsAdderService-->>PersonsController: PersonResponse
   PersonsController-->>Browser: Redirect to /Persons/Index
@@ -71,30 +71,30 @@ sequenceDiagram
 
 Key implementation points
 - DI registration and middleware are configured in `ContactsManager.UI/Program.cs`.
-- `ApplicationDbContext` (ContactsManager.Infrastructure) extends `IdentityDbContext<ApplicationUser, ApplicationRole, Guid>` and seeds `Countries` from `CountriesData.json`.
-- Repositories use EF Core and include related `Country` via `Include("Country")`. Services map between DTOs and entities using extension methods in DTO files.
+- Root file storage lives in `Db/` and includes `countries.json`, `persons.json`, `users.json`, and `roles.json`.
+- Repositories use JSON file helpers and rehydrate related `Country` data in memory. Services map between DTOs and entities using extension methods in DTO files.
 - Validation is centralized in `ValidationHelper` (see `ContactsManager.Core/Helpers/ValidationHelper.cs`).
-- Authentication/Authorization use ASP.NET Identity with cookie authentication and a fallback authorization policy configured in `Program.cs`.
+- Authentication/Authorization use cookie authentication plus JSON-backed user and role records configured in `Program.cs`.
 
 Testing
 - Unit tests: `ContactsManager.ServiceTests` uses Moq + AutoFixture to test services and validations.
-- Integration tests: `ContactsManager.IntegrationTests` uses `CustomWebApplicationFactory` to replace the real DB with an in-memory DB and exercise MVC endpoints.
+- Integration tests: `ContactsManager.IntegrationTests` uses `CustomWebApplicationFactory` to switch the app into testing mode and exercise MVC endpoints without SQL Server.
 
 Notable files to review (start here)
 - [ContactsManager/ContactsManager.UI/Program.cs](ContactsManager/ContactsManager.UI/Program.cs)
-- [ContactsManager/ContactsManager.Infrastructure/DbContext/ApplicationDbContext.cs](ContactsManager/ContactsManager.Infrastructure/DbContext/ApplicationDbContext.cs)
+- [ContactsManager/ContactsManager.Infrastructure/Storage/JsonFileStore.cs](ContactsManager/ContactsManager.Infrastructure/Storage/JsonFileStore.cs)
+- [ContactsManager/ContactsManager.Infrastructure/Services/FileAuthService.cs](ContactsManager/ContactsManager.Infrastructure/Services/FileAuthService.cs)
 - [ContactsManager/ContactsManager.Core/Services/PersonsAdderService.cs](ContactsManager/ContactsManager.Core/Services/PersonsAdderService.cs)
 - [ContactsManager/ContactsManager.Infrastructure/Repositories/PersonsRepository.cs](ContactsManager/ContactsManager.Infrastructure/Repositories/PersonsRepository.cs)
 - [ContactsManager/ContactsManager.Core/DTO/PersonRequest.cs](ContactsManager/ContactsManager.Core/DTO/PersonRequest.cs)
 - [ContactsManager/ContactsManager.UI/Controllers/PersonsController.cs](ContactsManager/ContactsManager.UI/Controllers/PersonsController.cs)
 
 Extension points and recommendations
-- Prefer using strongly-typed `Include(p => p.Country)` instead of string-based includes (`Include("Country")`).
-- Consider moving seed data loading out of `OnModelCreating` (file IO during model creation may fail in some environments) — use migrations or a dedicated seeder during startup.
-- Add tests for Filters and Middlewares, and integration tests covering Identity flows (register/login/access control).
+- Consider adding a small admin seed routine if you want a default login the first time the app starts.
+- Add tests for Filters and Middlewares, and integration tests covering register/login/access control with the new file-backed auth.
 
 Maintenance notes
-- `CountriesData.json` is required at runtime for initial seeding. Ensure the file is copied to output in project settings or referenced with a full path in production.
+- The `Db/` folder is the persistence root. Keep it under source control if you want the application state and seed data to travel with the repo.
 
 Contributing
 - Follow existing patterns: keep business logic in `Service_Classes`, data access in `Repository_Classes`, and DTOs in `ContactsManager.Core/DTO`.

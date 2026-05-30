@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Filters.ResultFilters
 {
@@ -16,14 +17,13 @@ namespace Filters.ResultFilters
             // executes before returning IAction Result
             _logger.LogInformation("-------- {FilterName}.{MethodName} called --------", nameof(PersonsListResultFilter), nameof(OnResultExecutionAsync));
 
+            context.HttpContext.Response.Headers.Append("X-ResultFilter", "Result-Value");
+
 
             await next(); // call subsequent result filters or the action result
 
             // executes after returning IAction Result
             _logger.LogInformation("-------- {FilterName}.{MethodName} called --------", nameof(PersonsListResultFilter), nameof(OnResultExecutionAsync));
-
-            // Add custom header to the response
-            context.HttpContext.Response.Headers.Add("X-ResultFilter", "Result-Value");
 
         }
     }

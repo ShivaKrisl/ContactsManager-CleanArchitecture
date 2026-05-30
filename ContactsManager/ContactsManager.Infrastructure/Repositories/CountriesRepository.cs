@@ -1,18 +1,19 @@
 ﻿using Entities_Core;
 using Repository_Contracts;
-using Db;
-using Microsoft.EntityFrameworkCore;
+using Storage;
 
 namespace Repository_Classes
 {
     public class CountriesRepository : ICountriesRepository
     {
+        private readonly JsonFileStore _fileStore;
 
-        private readonly ApplicationDbContext _db;
+        private readonly string _fileName;
 
-        public CountriesRepository(ApplicationDbContext db)
+        public CountriesRepository(JsonFileStore fileStore, Microsoft.Extensions.Options.IOptions<FileStorageOptions> options)
         {
-            _db = db;
+            _fileStore = fileStore;
+            _fileName = options.Value.CountriesFileName;
         }
 
         /// <summary>
@@ -22,8 +23,9 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Country> AddCountry(Country country)
         {
-            _db.Countries.Add(country);
-            await _db.SaveChangesAsync();
+            List<CountryRecord> countries = await ReadCountryRecordsAsync();
+            countries.Add(CountryRecord.FromCountry(country));
+            await _fileStore.WriteListAsync(_fileName, countries);
             return country;
         }
 
@@ -33,7 +35,7 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<List<Country>?> GetAllCountries()
         {
-            return await _db.Countries.ToListAsync();
+            return (await ReadCountryRecordsAsync()).Select(record => record.ToCountry()).ToList();
         }
 
         /// <summary>
@@ -43,12 +45,7 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Country?> GetCountryById(Guid countryId)
         {
-            Country? country = await _db.Countries.FirstOrDefaultAsync(c => c.CountryId == countryId);
-            if (country == null)
-            {
-                return null;
-            }
-            return country;
+            return (await GetAllCountries())?.FirstOrDefault(country => country.CountryId == countryId);
         }
 
         /// <summary>
@@ -58,13 +55,42 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Country?> GetCountryByName(string countryName)
         {
-            Country? country = await _db.Countries.FirstOrDefaultAsync(c => c.CountryName == countryName);
-            if (country == null)
-            {
-                return null;
-            }
-            return country;
+            return (await GetAllCountries())?.FirstOrDefault(country => string.Equals(country.CountryName, countryName, StringComparison.OrdinalIgnoreCase));
 
+        }
+
+        private async Task<List<CountryRecord>> ReadCountryRecordsAsync()
+        {
+            return await _fileStore.ReadListAsync(_fileName, () => GetDefaultCountries().Select(CountryRecord.FromCountry).ToList());
+        }
+
+        private static List<Country> GetDefaultCountries()
+        {
+            return new List<Country>
+            {
+                new Country { CountryId = Guid.NewGuid(), CountryName = "India" },
+                new Country { CountryId = Guid.NewGuid(), CountryName = "United States" },
+                new Country { CountryId = Guid.NewGuid(), CountryName = "United Kingdom" },
+                new Country { CountryId = Guid.NewGuid(), CountryName = "Canada" },
+                new Country { CountryId = Guid.NewGuid(), CountryName = "Australia" }
+            };
+        }
+
+        private sealed record CountryRecord(Guid CountryId, string? CountryName)
+        {
+            public static CountryRecord FromCountry(Country country)
+            {
+                return new CountryRecord(country.CountryId, country.CountryName);
+            }
+
+            public Country ToCountry()
+            {
+                return new Country
+                {
+                    CountryId = CountryId,
+                    CountryName = CountryName
+                };
+            }
         }
     }
 }

@@ -1,19 +1,23 @@
-﻿using Entities_Core;
+﻿using System.Linq.Expressions;
+using Entities_Core;
 using Repository_Contracts;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using Db;
+using Storage;
 
 namespace Repository_Classes
 {
     public class PersonsRepository : IPersonsRepository
     {
+        private readonly JsonFileStore _fileStore;
 
-        private readonly ApplicationDbContext _db;
+        private readonly ICountriesRepository _countriesRepository;
 
-        public PersonsRepository(ApplicationDbContext db)
+        private readonly string _fileName;
+
+        public PersonsRepository(JsonFileStore fileStore, ICountriesRepository countriesRepository, Microsoft.Extensions.Options.IOptions<FileStorageOptions> options)
         {
-            _db = db;
+            _fileStore = fileStore;
+            _countriesRepository = countriesRepository;
+            _fileName = options.Value.PersonsFileName;
         }
 
         /// <summary>
@@ -23,8 +27,9 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Person> AddPerson(Person person)
         {
-            _db.Persons.Add(person);
-            await _db.SaveChangesAsync();
+            List<PersonRecord> persons = await ReadPersonRecordsAsync();
+            persons.Add(PersonRecord.FromPerson(person));
+            await _fileStore.WriteListAsync(_fileName, persons);
             return person;
         }
 
@@ -35,9 +40,15 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<bool> DeletePerson(Guid personId)
         {
-            _db.Persons.RemoveRange(_db.Persons.Where(p => p.PersonId == personId));
-            int deletedCount = await _db.SaveChangesAsync();
-            return deletedCount > 0;
+            List<PersonRecord> persons = await ReadPersonRecordsAsync();
+            int removedCount = persons.RemoveAll(person => person.PersonId == personId);
+            if (removedCount == 0)
+            {
+                return false;
+            }
+
+            await _fileStore.WriteListAsync(_fileName, persons);
+            return true;
         }
 
         /// <summary>
@@ -46,7 +57,7 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<List<Person>?> GetAllPersons()
         {
-            return await _db.Persons.Include("Country").ToListAsync();
+            return await HydratePersonsAsync(await ReadPersonRecordsAsync());
         }
 
         /// <summary>
@@ -56,7 +67,8 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<List<Person>?> GetFilteredPersons(Expression<Func<Person, bool>> predicate)
         {
-            return await _db.Persons.Include("Country").Where(predicate).ToListAsync();
+            List<Person> persons = await GetAllPersons() ?? new List<Person>();
+            return persons.AsQueryable().Where(predicate).ToList();
         }
 
         /// <summary>
@@ -66,34 +78,36 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Person?> GetPersonById(Guid personId)
         {
-            Person? person = await _db.Persons.Include("Country").FirstOrDefaultAsync(p => p.PersonId == personId);
-            if (person == null)
-            {
-                return null;
-            }
-            return person;
+            return (await GetAllPersons())?.FirstOrDefault(person => person.PersonId == personId);
         }
 
         public async Task<Person> UpdatePerson(Guid personId, Person person)
         {
-            Person? personToUpdate = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
-            
-            if(personToUpdate == null)
+            List<PersonRecord> persons = await ReadPersonRecordsAsync();
+            PersonRecord? existing = persons.FirstOrDefault(item => item.PersonId == personId);
+
+            if (existing == null)
             {
                 return person;
             }
 
-            personToUpdate.FirstName = person.FirstName;
-            personToUpdate.LastName = person.LastName;
-            personToUpdate.Email = person.Email;
-            personToUpdate.PhoneNumber = person.PhoneNumber;
-            personToUpdate.CountryId = person.CountryId;
-            personToUpdate.Country = person.Country;
-            personToUpdate.Gender =  person.Gender;
-            personToUpdate.DateOfBirth = person.DateOfBirth;
+            persons.Remove(existing);
+            persons.Add(PersonRecord.FromPerson(new Person
+            {
+                PersonId = personId,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Email = person.Email,
+                PhoneNumber = person.PhoneNumber,
+                DateOfBirth = person.DateOfBirth,
+                Gender = person.Gender,
+                CountryId = person.CountryId
+            }));
 
-            await _db.SaveChangesAsync();
-            return personToUpdate;
+            await _fileStore.WriteListAsync(_fileName, persons);
+
+            Person? updatedPerson = await GetPersonById(personId);
+            return updatedPerson ?? person;
         }
 
         /// <summary>
@@ -103,12 +117,7 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Person?> GetPersonByEmail(string email)
         {
-            Person? person = await _db.Persons.Include("Country").FirstOrDefaultAsync(p => p.Email == email);
-            if (person == null)
-            {
-                return null;
-            }
-            return person;
+            return (await GetAllPersons())?.FirstOrDefault(person => string.Equals(person.Email, email, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -118,12 +127,64 @@ namespace Repository_Classes
         /// <returns></returns>
         public async Task<Person?> GetPersonByMobile(string mobile)
         {
-            Person? person = await _db.Persons.Include("Country").FirstOrDefaultAsync(p => p.PhoneNumber == mobile);
-            if (person == null)
+            return (await GetAllPersons())?.FirstOrDefault(person => string.Equals(person.PhoneNumber, mobile, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private async Task<List<PersonRecord>> ReadPersonRecordsAsync()
+        {
+            return await _fileStore.ReadListAsync(_fileName, () => new List<PersonRecord>());
+        }
+
+        private async Task<List<Person>?> HydratePersonsAsync(List<PersonRecord> records)
+        {
+            List<Person> persons = new();
+            foreach (PersonRecord record in records)
             {
-                return null;
+                Country? country = await _countriesRepository.GetCountryById(record.CountryId);
+                persons.Add(record.ToPerson(country));
             }
-            return person;
+
+            return persons;
+        }
+
+        private sealed record PersonRecord(
+            Guid PersonId,
+            string? FirstName,
+            string? LastName,
+            DateTime DateOfBirth,
+            string? Email,
+            string? PhoneNumber,
+            string? Gender,
+            Guid CountryId)
+        {
+            public static PersonRecord FromPerson(Person person)
+            {
+                return new PersonRecord(
+                    person.PersonId,
+                    person.FirstName,
+                    person.LastName,
+                    person.DateOfBirth,
+                    person.Email,
+                    person.PhoneNumber,
+                    person.Gender,
+                    person.CountryId);
+            }
+
+            public Person ToPerson(Country? country)
+            {
+                return new Person
+                {
+                    PersonId = PersonId,
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    DateOfBirth = DateOfBirth,
+                    Email = Email,
+                    PhoneNumber = PhoneNumber,
+                    Gender = Gender,
+                    CountryId = CountryId,
+                    Country = country ?? new Country { CountryId = CountryId, CountryName = string.Empty }
+                };
+            }
         }
     }
 }

@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ContactsManager.Core.Domain.IdentityEntities
+﻿namespace ContactsManager.Core.Domain.IdentityEntities
 {
-    public class ApplicationRole : IdentityRole<Guid> // type of Id
+    public class ApplicationRole
     {
-        // by default it has id, name, normalizedname
-        // you can add custom properties here if needed
-
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+        public string? NormalizedName { get; set; }
     }
-    
 }

@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Db;
 using Service_Contracts;
 using Service_Classes;
 using Repository_Contracts;
@@ -7,11 +5,12 @@ using Repository_Classes;
 using Serilog;
 using Serilog.AspNetCore;
 using ContactManagement.Middlewares;
-using ContactsManager.Core.Domain.IdentityEntities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Filters.ActionFilters;
+using Storage;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +28,17 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider service, L
 
 //});
 builder.Services.AddLogging(); // add logging as service
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<FileStorageOptions>(options =>
+{
+    string? configuredRootPath = builder.Configuration["FileStorage:RootPath"];
+    options.RootPath = string.IsNullOrWhiteSpace(configuredRootPath)
+        ? Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "Db"))
+        : Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, configuredRootPath));
+});
+
+builder.Services.AddSingleton<JsonFileStore>();
 
 builder.Services.AddHttpLogging(logging => // add HttpLogging Service
 {
@@ -57,53 +67,37 @@ builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleteService>();
 builder.Services.AddScoped<IPersonsGetterService, PersonsGetterService>();
 builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+builder.Services.AddScoped<IAuthService, FileAuthService>();
 
-// add DbCOntext
-if(builder.Environment.IsEnvironment("Testing") == false)
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
     });
-}
 
-// add Identity Context
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+if (builder.Environment.IsEnvironment("Testing") == false)
 {
-    options.Password.RequiredLength = 6; // min length
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredUniqueChars = 3;
-
-})// User class name & role class name
-    .AddEntityFrameworkStores<ApplicationDbContext>()// dbcontext name
-    .AddDefaultTokenProviders() // add default token providers like email confirmation, password reset, glogin, fblogin etc.
-    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()// for user repository -- repository is generated automatically
-    .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
-// for role repository -- repository is generated automatically
-
-
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().RequireAuthenticatedUser()
-        .Build(); // fallback policy for all endpoints
-
-    options.AddPolicy("NotAuthorized", policy =>
+    builder.Services.AddAuthorization(options =>
     {
-        policy.RequireAssertion(context =>
+        options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+        options.AddPolicy("NotAuthorized", policy =>
         {
-            return !context.User.Identity.IsAuthenticated; // if user is not authenticated will return true
-            // to allow anonymous access to the endpoints
+            policy.RequireAssertion(context => !context.User.Identity.IsAuthenticated);
         });
     });
-});
-
-builder.Services.ConfigureApplicationCookie(options =>
+}
+else
 {
-    options.LoginPath = "/Account/Login"; // redirect to login page if user is not authenticated
-});
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("NotAuthorized", policy =>
+        {
+            policy.RequireAssertion(context => !context.User.Identity.IsAuthenticated);
+        });
+    });
+}
 
 var app = builder.Build();
 // 1. ExceptionalHandlingMiddleware
